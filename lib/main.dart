@@ -1,13 +1,7 @@
-import 'dart:convert';
-
 import 'package:flutter/material.dart';
-import 'package:http/http.dart' as http;
 import 'package:task/album.dart';
 import 'package:task/album_screen.dart';
-
-const clientId = '748883a601544df09c58f64955f2a019';
-const clientSecret = '7bbfa008b011408a91f437f2a6afd8ca';
-const token_url = 'https://accounts.spotify.com/api/token';
+import 'authorization.dart';
 
 void main() {
   runApp(MyApp());
@@ -20,7 +14,7 @@ class MyApp extends StatelessWidget {
     return MaterialApp(
       title: 'Flutter Demo',
       theme: ThemeData(
-        primarySwatch: Colors.purple,
+        primaryColor: Colors.deepPurple,
       ),
       home: MyHomePage(),
     );
@@ -36,35 +30,6 @@ class _MyHomePageState extends State<MyHomePage> {
 //  String albumType;
 //  String albumImage;
 //  String copyRight;
-
-  Future<String> getAccessToken() async {
-    final response = await http.post(token_url, body: {
-      'grant_type': 'client_credentials'
-    }, headers: {
-      'Authorization':
-          'Basic ${base64Encode(utf8.encode('$clientId:$clientSecret'))}'
-    });
-    var tokenResponseData = jsonDecode(response.body);
-//    print(tokenResponseData);
-    var _accessToken = tokenResponseData['access_token'];
-
-//    print(_accessToken);
-    return _accessToken;
-  }
-
-  Future<Map> getAlbums() async {
-    String accessToken = await getAccessToken();
-    final url =
-        'https://api.spotify.com/v1/albums?ids=41MnTivkwTO3UUJ8DrqEJJ%2C6JWc4iAiJ9FjyK0B59ABb4%2C6UXCm6bOO4gFlDQZV5yL37';
-    final response = await http.get(
-      url,
-      headers: {'Authorization': 'Bearer $accessToken'},
-    );
-//    print(response.body);
-    final loadedData = jsonDecode(response.body);
-    print(loadedData);
-    return loadedData;
-  }
 
   List<Album> albums = [];
 
@@ -103,7 +68,7 @@ class _MyHomePageState extends State<MyHomePage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-        backgroundColor: Colors.purple[300],
+        backgroundColor: Colors.deepPurple,
         appBar: AppBar(
           elevation: 0.0,
           centerTitle: true,
@@ -118,7 +83,7 @@ class _MyHomePageState extends State<MyHomePage> {
             return Column(
               children: [
                 Container(
-                  color: Colors.purple[100],
+                  color: Colors.purple[300],
                   child: GestureDetector(
                     onTap: () {
                       Navigator.of(context)
@@ -146,7 +111,10 @@ class _MyHomePageState extends State<MyHomePage> {
                               fontSize: 20,
                               fontWeight: FontWeight.bold),
                         ),
-                        subtitle: Text(albums[index].albumType ?? ''),
+                        subtitle: Text(
+                          albums[index].albumType ?? '',
+                          style: TextStyle(color: Colors.black),
+                        ),
                       ),
                     ),
                   ),
